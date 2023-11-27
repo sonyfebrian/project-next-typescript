@@ -1,0 +1,1 @@
+export const endpoint = 'https://delman-fe-api.fly.dev/'

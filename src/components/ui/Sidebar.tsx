@@ -7,23 +7,16 @@ import {
     Text,
     useColorModeValue,
     BoxProps,
-    FlexProps,
+
 } from '@chakra-ui/react'
-import {
-    FiHome,
-    FiTrendingUp,
-    FiCompass,
-    FiStar,
-    FiSettings,
-} from 'react-icons/fi'
-import { IconType } from 'react-icons'
+
+import { MdDashboard } from "react-icons/md";
+import { HiMiniUsers, HiMiniUserPlus } from "react-icons/hi2";
+import { HiOutlineSearch } from "react-icons/hi";
 import NavItem from './NavItem'
+import Link from 'next/link';
 
 
-interface LinkItemProps {
-    name: string
-    icon: IconType
-}
 
 
 
@@ -31,13 +24,6 @@ interface SidebarProps extends BoxProps {
     onClose: () => void
 }
 
-const LinkItems: Array<LinkItemProps> = [
-    { name: 'Home', icon: FiHome },
-    { name: 'Trending', icon: FiTrendingUp },
-    { name: 'Explore', icon: FiCompass },
-    { name: 'Favourites', icon: FiStar },
-    { name: 'Settings', icon: FiSettings },
-]
 
 
 const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
@@ -53,15 +39,23 @@ const Sidebar = ({ onClose, ...rest }: SidebarProps) => {
             {...rest}>
             <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
                 <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-                    Logo
+                    delman.io
                 </Text>
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>
-            {LinkItems.map((link) => (
-                <NavItem key={link.name} icon={link.icon}>
-                    {link.name}
-                </NavItem>
-            ))}
+
+            <NavItem icon={MdDashboard}>
+                <Link href="/"> Dashboard </Link>
+            </NavItem>
+            <NavItem icon={HiMiniUsers}>
+                <Link href="/Users/Users">  Users</Link>
+            </NavItem>
+            <NavItem icon={HiMiniUserPlus}>
+                <Link href="/">   Registration</Link>
+            </NavItem>
+            <NavItem icon={HiOutlineSearch}>
+                <Link href="/">  Search</Link>
+            </NavItem>
         </Box>
     )
 }

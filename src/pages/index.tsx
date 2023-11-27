@@ -1,12 +1,137 @@
 import Head from 'next/head'
+import { CSSProperties } from 'react';
 // import Image from 'next/image'
+import {
+  IconButton,
+  Avatar,
+  Box,
+  Flex,
+  HStack,
+  VStack,
+  Stack,
+  useColorModeValue,
+  Text,
+  Drawer,
+  DrawerContent,
+  useDisclosure,
+  FlexProps,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+} from '@chakra-ui/react'
+import {
+  FiMenu,
+  FiBell,
+  FiChevronDown,
+} from 'react-icons/fi'
 import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
 import Dashboard from '@/components/Dashboard'
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios'
+import { endpoint } from '@/utils/api';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from '@chakra-ui/react'
+import { FixedSizeList as List, ListChildComponentProps, VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 
 const inter = Inter({ subsets: ['latin'] })
+interface SalesDatas {
+  id: string;
+  name: string;
+  sales_id: string;
+  item_id: string;
+  qty: string;
+  consumen_name: string;
+  transaction_date: string;
+}
+interface SalesItem {
+  message: string;
+  data: SalesDatas[];
+}
 
+interface MobileProps extends FlexProps {
+  onOpen: () => void
+
+}
 export default function Home() {
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { data: salesData, isLoading, isError } = useQuery<SalesItem | null>({
+    queryKey: ['posts'],
+    queryFn: async () => {
+      try {
+        const response = await axios.get<SalesItem>(`${endpoint}`);
+        const res = response.data
+        return res;
+      } catch (error) {
+        throw new Error('Failed to fetch sales data');
+      }
+    },
+  });
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (isError || !salesData) {
+    return <p>Error: Failed to fetch data</p>;
+  }
+  const data: SalesDatas[] = salesData.data;
+
+  const columnWidths = [60, 150, 150, 100, 60, 150, 150]
+
+  const Cell = ({ columnIndex, rowIndex, style }: GridChildComponentProps) => {
+
+    const cellStyle: CSSProperties = {
+      ...style,
+      border: '1px solid black',
+      display: 'flex',
+      justifyContent: 'left',
+      alignItems: 'center',
+      padding: "10px",
+      fontWeight: rowIndex === 0 ? 'bold' : 'normal',
+      backgroundColor: rowIndex === 0 ? '#f0f0f0' : 'white',
+      whiteSpace: 'nowrap', // Prevent text wrapping
+      overflow: 'hidden', // Hide overflowed content
+      textOverflow: 'ellipsis', // Show ellipsis for overflowed text
+
+    };
+
+    const rowData = rowIndex === 0 ? data[0] : data[rowIndex - 1];
+    const columnNames = Object.keys(rowData) as (keyof SalesDatas)[];
+
+    const cellData = rowIndex === 0 ? columnNames[columnIndex] : rowData[columnNames[columnIndex]];
+    const handleClick = () => {
+      const rowData = rowIndex === 0 ? data[0] : data[rowIndex - 1];
+      const columnNames = Object.keys(rowData) as (keyof SalesDatas)[];
+
+      const cellData = rowIndex === 0 ? columnNames[columnIndex] : rowData[columnNames[columnIndex]];
+
+      console.log(`Cell ${cellData} at row ${rowIndex}, column ${columnIndex} was clicked!`);
+
+    };
+
+
+    return (
+      <div style={cellStyle} onClick={handleClick}>
+        {cellData}
+      </div>
+    );
+  };
+
+
+
   return (
     <>
       <Head>
@@ -16,7 +141,24 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={` ${inter.className}`}>
-        <Dashboard > tes </Dashboard>
+        <Dashboard >
+
+          <Grid
+            columnCount={columnWidths.length}
+            columnWidth={(index) => {
+              console.log(`Column index: ${index}, Width: ${columnWidths[index]}`);
+              return columnWidths[index];
+            }}
+            height={500}
+            rowCount={data.length + 1}
+            rowHeight={(index) => (index === 0 ? 50 : 30)}
+            width={850}
+          >
+            {Cell}
+          </Grid>
+
+
+        </Dashboard>
       </main>
     </>
   )
