@@ -11,14 +11,14 @@ import { IconType } from 'react-icons'
 interface NavItemProps extends FlexProps {
     icon: IconType
     children: React.ReactNode
+
 }
 
 
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
     return (
         <Box
-            as="a"
-            href="#"
+
             style={{ textDecoration: 'none' }}
             _focus={{ boxShadow: 'none' }}>
             <Flex

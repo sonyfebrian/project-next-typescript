@@ -1,49 +1,16 @@
 import Head from 'next/head'
 import { CSSProperties } from 'react';
-// import Image from 'next/image'
 import {
-  IconButton,
-  Avatar,
-  Box,
-  Flex,
-  HStack,
-  VStack,
-  Stack,
-  useColorModeValue,
-  Text,
-  Drawer,
-  DrawerContent,
   useDisclosure,
   FlexProps,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
 } from '@chakra-ui/react'
-import {
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-} from 'react-icons/fi'
+
 import { Inter } from 'next/font/google'
 import Dashboard from '@/components/Dashboard'
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios'
 import { endpoint } from '@/utils/api';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-} from '@chakra-ui/react'
-import { FixedSizeList as List, ListChildComponentProps, VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window';
+import { VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window';
 
 const inter = Inter({ subsets: ['latin'] })
 interface SalesDatas {
@@ -60,10 +27,7 @@ interface SalesItem {
   data: SalesDatas[];
 }
 
-interface MobileProps extends FlexProps {
-  onOpen: () => void
 
-}
 export default function Home() {
 
   const { isOpen, onOpen, onClose } = useDisclosure()

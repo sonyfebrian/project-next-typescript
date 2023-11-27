@@ -1,40 +1,49 @@
 'use client'
 
-
+import { useState, useEffect } from 'react';
 import {
     IconButton,
-    Avatar,
-    Box,
     Flex,
-    HStack,
     VStack,
-    Stack,
     useColorModeValue,
     Text,
-    Drawer,
-    DrawerContent,
-    useDisclosure,
     FlexProps,
-    Menu,
-    MenuButton,
-    MenuDivider,
-    MenuItem,
-    MenuList,
 } from '@chakra-ui/react'
 import {
     FiMenu,
-    FiBell,
-    FiChevronDown,
 } from 'react-icons/fi'
-
+import { useRouter } from 'next/router';
 
 interface MobileProps extends FlexProps {
     onOpen: () => void
-
 }
 
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+    const router = useRouter();
+    const [pageTitle, setPageTitle] = useState('Sales Dashboard');
+
+    useEffect(() => {
+        const handleRouteChange = () => {
+
+            if (router.pathname === '/Users/Users') {
+                setPageTitle('Users Dashboard');
+            } else {
+                setPageTitle('Sales Dashboard');
+            }
+        };
+
+
+        router.events.on('routeChangeComplete', handleRouteChange);
+
+
+        handleRouteChange();
+
+
+        return () => {
+            router.events.off('routeChangeComplete', handleRouteChange);
+        };
+    }, [router.pathname, router.events]);
     return (
         <Flex
             ml={{ base: 0, md: 60 }}
@@ -44,7 +53,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             bg={useColorModeValue('white', 'gray.900')}
             borderBottomWidth="1px"
             borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
-            // justifyContent={{ base: 'space-between', md: 'flex-start' }}
+
             {...rest}>
             <IconButton
                 display={{ base: 'flex', md: 'none' }}
@@ -72,47 +81,13 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                     fontSize="2xl"
                     fontFamily="monospace"
                     fontWeight="bold">
-                    Sales Dashboard
+                    {pageTitle}
                 </Text>
                 <Text fontSize="xs" color="blue.600">
-                    List Of Sales data
+                    {pageTitle === 'Users Dashboard' ? 'List of Users data' : 'List of Sales data'}
                 </Text>
             </VStack>
-            {/* <HStack spacing={{ base: '0', md: '6' }}>
-                <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FiBell />} />
-                <Flex alignItems={'center'}>
-                    <Menu>
-                        <h1>heheheh</h1>
-                        <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
-                            <HStack>
 
-                                <VStack
-                                    display={{ base: 'none', md: 'flex' }}
-                                    alignItems="flex-start"
-                                    spacing="1px"
-                                    ml="2">
-                                    <Text fontSize="sm">Justina Clark</Text>
-                                    <Text fontSize="xs" color="gray.600">
-                                        Admin sdasd
-                                    </Text>
-                                </VStack>
-                                <Box display={{ base: 'none', md: 'flex' }}>
-                                    <FiChevronDown />
-                                </Box>
-                            </HStack>
-                        </MenuButton>
-                        <MenuList
-                            bg={useColorModeValue('white', 'gray.900')}
-                            borderColor={useColorModeValue('gray.200', 'gray.700')}>
-                            <MenuItem>Profile</MenuItem>
-                            <MenuItem>Settings</MenuItem>
-                            <MenuItem>Billing</MenuItem>
-                            <MenuDivider />
-                            <MenuItem>Sign out</MenuItem>
-                        </MenuList>
-                    </Menu>
-                </Flex>
-            </HStack> */}
         </Flex>
     )
 }
